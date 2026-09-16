@@ -4,35 +4,25 @@
 
 ## 安装
 
-手动安装:把 `SKILL.md`(或整个文件夹)拷进你 agent 的技能目录,然后重新加载技能。技能名取 `SKILL.md` 里 `metadata` 上方的 `name`,即 `humanizer-cn`。
+手动安装:把 `SKILL.md`(或整个文件夹)拷进你 agent 的技能目录,然后重新加载技能。技能名取 `SKILL.md` 里 `metadata` 上方的 `name`,即 `shuorenhua`。
 
 - 通用:拷到该 agent 的技能/skills 目录即可。
-- QwenWork:拷到 `~/.qwenworkcn/skills/humanizer-cn/`。
+- QwenWork:拷到 `~/.qwenworkcn/skills/shuorenhua/`。
 
 技能的 `description` 决定它何时被自动触发;你也可以显式调用。
 
-### 可选:在 QwenWork 里用 `/shuorenhua` 唤起
+### 在 QwenWork 里用 `/shuorenhua` 唤起
 
-QwenWork 里技能和 slash command 是两套东西。想要一个 `/shuorenhua` 命令,就在 `~/.qwenworkcn/commands/` 下新建 `shuorenhua.md`(这个命令文件在本仓库之外,技能本身保持纯净):
+技能名就是 `shuorenhua`,装好后直接能用 `/` 唤起:把技能拷到 `~/.qwenworkcn/skills/shuorenhua/`,重启 QwenWork,在输入框敲 `/` 就会看到 `shuorenhua`,选中后粘贴中文即可。
 
-```markdown
----
-description: 把 AI 味的中文改写得像人写的
----
-
-把用户在这条命令后面提供的文本,套用 humanizer-cn skill 改写:
-标记 AI 特征 → 起草改写 → 检查草稿 → 给出终稿。
-保留事实,不编造;若用户给了写作样例,按样例语气改写。
-```
-
-之后在输入框敲 `/shuorenhua` 再粘贴文本即可。
+注意:QwenWork 的 `/` 菜单按**技能名**列出技能,不读 `~/.qwenworkcn/commands/` 里的命令文件。所以不需要、也不要再单独建命令文件——把技能的 `name` 设成你想要的 `/` 名字即可。
 
 ## 用法
 
 直接调用技能,或用大白话提要求:
 
 ```
-用 humanizer-cn 改写这段:[你的文本]
+用 shuorenhua 改写这段:[你的文本]
 ```
 
 ```
@@ -163,7 +153,7 @@ description: 把 AI 味的中文改写得像人写的
 <details>
 <summary>显示发布说明</summary>
 
-- **4.0.0** - 中文化。把整份技能改写为面向中文文本:重写 AI 高频词表(赋能、抓手、闭环等中文黑话),把英文专属的模式按中文重建——连字符词对换成四字格与"……化"堆砌(§10)、被动语态换成名词化弱动词与无主句(§11)、-ing 尾巴换成结尾拔高小句(§15)、回避 is/are/has 换成滥用"进行/加以/予以"(§18)、装饰性标题去掉英文大小写、弯引号换成全角半角与中英标点混用(§21),破折号规则从"禁用"改为"限频"并补省略号、感叹号(§8)。保留 A–E 五组结构与 1–25 编号。去掉全部商店与 agent 绑定:删除 `.claude-plugin/`(plugin.json、marketplace.json)和 `agents/openai.yaml`,README 只留中立的手动安装,校验脚本只比对 SKILL.md 与 README 两处版本。技能改名为 `humanizer-cn`,另配一个仓库外的 QwenWork 命令 `/shuorenhua`。完整示例换成中文(重庆游记)。
+- **4.0.0** - 中文化。把整份技能改写为面向中文文本:重写 AI 高频词表(赋能、抓手、闭环等中文黑话),把英文专属的模式按中文重建——连字符词对换成四字格与"……化"堆砌(§10)、被动语态换成名词化弱动词与无主句(§11)、-ing 尾巴换成结尾拔高小句(§15)、回避 is/are/has 换成滥用"进行/加以/予以"(§18)、装饰性标题去掉英文大小写、弯引号换成全角半角与中英标点混用(§21),破折号规则从"禁用"改为"限频"并补省略号、感叹号(§8)。保留 A–E 五组结构与 1–25 编号。去掉全部商店与 agent 绑定:删除 `.claude-plugin/`(plugin.json、marketplace.json)和 `agents/openai.yaml`,README 只留中立的手动安装,校验脚本只比对 SKILL.md 与 README 两处版本。技能命名为 `shuorenhua`,这样在 QwenWork 的 `/` 菜单(按技能名列出)里可直接用 `/shuorenhua` 唤起。完整示例换成中文(重庆游记)。
 - **3.0.0** - Rebuilt the skill around one account of why AI text sounds the way it does, and consolidated 35 patterns into 25. Patterns are grouped in five sections and numbered by strength and frequency. (English baseline this Chinese version forked from.)
 - **2.11.3** 及更早 - 英文版的历史改动,见 git 提交记录。
 

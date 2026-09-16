@@ -1,5 +1,5 @@
 ---
-name: humanizer-cn
+name: shuorenhua
 description: |
   把 AI 味的中文改写得像作者本人写的,不改变原意。
   编辑或审阅中文文稿、需要去掉 AI 痕迹时使用:不是…而是 的对比、一行式收尾、铺垫开场、
