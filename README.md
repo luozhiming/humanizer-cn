@@ -1,202 +1,174 @@
-# Humanizer
+# 说人话(Humanizer 中文版)
 
-[![skills.sh installs](https://skills.sh/b/blader/humanizer)](https://skills.sh/blader/humanizer)
+把 AI 味的中文改写得像人写的,不改变它说了什么。它只是 Markdown,所以任何支持技能的 agent 都能用,不绑定任何一家,也不上架任何商店。
 
-Humanizer rewrites AI-sounding text so it reads like a person wrote it, without changing what it says. Because it is just Markdown, it works with any agent that supports skills.
+## 安装
 
-## Installation
+手动安装:把 `SKILL.md`(或整个文件夹)拷进你 agent 的技能目录,然后重新加载技能。技能名取 `SKILL.md` 里 `metadata` 上方的 `name`,即 `humanizer-cn`。
 
-Install Humanizer with the Skills CLI:
+- 通用:拷到该 agent 的技能/skills 目录即可。
+- QwenWork:拷到 `~/.qwenworkcn/skills/humanizer-cn/`。
 
-```bash
-npx skills add blader/humanizer --global
+技能的 `description` 决定它何时被自动触发;你也可以显式调用。
+
+### 可选:在 QwenWork 里用 `/shuorenhua` 唤起
+
+QwenWork 里技能和 slash command 是两套东西。想要一个 `/shuorenhua` 命令,就在 `~/.qwenworkcn/commands/` 下新建 `shuorenhua.md`(这个命令文件在本仓库之外,技能本身保持纯净):
+
+```markdown
+---
+description: 把 AI 味的中文改写得像人写的
+---
+
+把用户在这条命令后面提供的文本,套用 humanizer-cn skill 改写:
+标记 AI 特征 → 起草改写 → 检查草稿 → 给出终稿。
+保留事实,不编造;若用户给了写作样例,按样例语气改写。
 ```
 
-Leave off `--global` to install Humanizer only in the current project. Add `--agent <name>` or `--agent '*'` to choose which agents receive it, then reload their skills. The skill answers to `/humanizer`.
+之后在输入框敲 `/shuorenhua` 再粘贴文本即可。
 
-Claude Code 2.1.142 or newer can install the plugin instead:
+## 用法
 
-```text
-/plugin marketplace add blader/humanizer
-/plugin install humanizer@humanizer
-```
-
-The plugin answers to `/humanizer:humanizer`.
-
-In Claude Desktop, download this repository as a ZIP and upload it as a skill. For a manual install, copy `SKILL.md` into the agent's skill folder.
-
-## Usage
-
-Call the skill directly:
+直接调用技能,或用大白话提要求:
 
 ```
-/humanizer
-
-[paste your text here]
+用 humanizer-cn 改写这段:[你的文本]
 ```
 
-Or ask in plain language:
-
 ```
-Please humanize this text: [your text]
+帮我把这段改得像人写的:[你的文本]
 ```
 
-To rewrite a file, give Humanizer its path:
+要改写某个文件,把路径给它:
 
 ```
-Humanize the prose in docs/launch-post.md
+把 docs/launch-post.md 里的散文改写得像人写的
 ```
 
-### Match your voice
+### 匹配你的语气
 
-If you want the rewrite to sound more like you, include a sample:
+想让改写更像你,就附一段样例:
 
 ```
-/humanizer
+这是我自己的文字,用来匹配语气:
+[粘贴 2-3 段你写的东西]
 
-Here's a sample of my writing for voice matching:
-[paste 2-3 paragraphs of your own writing]
-
-Now humanize this text:
-[paste AI text to humanize]
+现在改写这段:
+[粘贴要去 AI 味的文本]
 ```
 
-Humanizer follows the sample's rhythm, word choice, punctuation, and deliberate quirks, including dashes if you use them.
+技能会跟着样例的节奏、用词、标点和刻意的习惯走,包括你用破折号的方式。
 
-## How it works
+## 它怎么工作
 
-A language model writes whatever is most likely to come next, so by default it makes the choice that fits the widest range of readers and subjects. A person chooses for one reader and one subject. Every tell Humanizer looks for is a form of that default choice: a sentence that signals importance instead of adding a fact, rhythm or formatting applied by rule, an ordinary fact dressed as a pivotal one, or text left over from the chat.
+语言模型总是写"最可能接下去"的词,所以它默认选的是适配最广读者、最广主题的那个选项。人只为一个读者、一个主题做选择。本技能找的每个特征,都是这种默认选择的一种表现:一句暗示"这很重要"却没给出事实的句子、按规则套用的节奏或排版、被包装成转折点的普通事实,或从聊天里残留下来的外壳。
 
 > "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
 > Wikipedia, ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
 
-Humanizer marks every tell it finds, strongest first. It drafts a rewrite without treating the original structure as fixed, checks the draft against the patterns and the original claims, and then writes the final version. It does not make things up. A name, number, date, quote, citation, or other factual detail must come from the source or the writer, and if a sentence needs a detail that is missing, Humanizer asks instead of inventing one.
+技能会标出它发现的每个特征,强的在前;起草改写时不把原结构当成不可动;再把草稿对照模式和原文论断检查一遍;最后写出终稿。它不编造。人名、数字、日期、引语、出处等事实细节必须来自原文或作者;如果某个句子缺一个细节,它会问,而不是编一个。
 
-When you paste text, Humanizer shows its work: the first rewrite, a short critique of anything that still sounds artificial, and the final version. Point it at a file and it changes only the prose, leaving code, data, frontmatter, and link targets alone. Personal writing keeps the writer's opinions and quirks. Technical and reference prose stays neutral and plain.
+粘贴文本时,技能会展示过程:第一版改写、对仍然生硬之处的简短点评、以及终稿。指向文件时,它只改散文,代码、数据、frontmatter、链接目标都不动。个人化写作保留作者的观点和怪癖;技术和参考类文字保持中立、平实。
 
-## The 25 patterns
+## 25 个模式
 
-The patterns are numbered by strength and frequency. The first five justify an edit on a single sighting. Patterns marked *weak alone* count only when several tells share a passage, because a careful writer may use any one of them on purpose.
+模式按强度和频率编号。前五条见到一处就该改。标了*单独算弱*的模式,只有在一段里和别的特征同时出现才算数,因为认真的作者可能刻意用其中任何一个。
 
-### A. Staging instead of stating
+### A. 摆架子而不直说
 
-| # | Pattern | Before | After |
+| # | 模式 | 改前 | 改后 |
 |---|---------|--------|-------|
-| 1 | **Not X but Y** | "It's not just X, it's Y", "This doesn't mean X. It means Y." | State the point directly |
-| 2 | **One-line closers and dramatic fragments** | "That is the real win." after every section; "No prior. No nostalgia." | Cut the closer that repeats; merge fragments into a specific claim |
-| 3 | **Sayings that sound deep** | "At its core, what matters is...", "Symmetry is the language of trust" | Replace the saying with the specific claim |
-| 4 | **Staged run-up before the point** | "Let's dive in", "Honestly? It depends..." | Remove the run-up and state the point |
-| 5 | **Arguing with no one** | "This isn't mainly about...", "A tempting approach would be..." | Remove the unraised objection or fake option; keep any real claim |
+| 1 | **不是 X 而是 Y** | "这不只是 X,这是 Y""这并不意味着 X。它意味着 Y。" | 直接把观点说出来 |
+| 2 | **一行式收尾与碎句** | 每节后都跟"这,才是真正的关键。";"没有退路。没有借口。" | 删掉重复的收尾;把碎句并成有具体论断的句子 |
+| 3 | **听起来很深的格言** | "归根结底,最重要的是……""对称是信任的语言" | 用具体论断替换格言 |
+| 4 | **说正事前的铺垫** | "让我们一起来看看""说实话?这取决于……" | 去掉铺垫,直接说 |
+| 5 | **跟没人辩论** | "这主要不是关于……""一种看似可行的做法是……" | 删掉没人提的反对意见或假选项;留住真论断 |
 
-### B. Rhythm by rule
+### B. 按规则造节奏
 
-| # | Pattern | Before | After |
+| # | 模式 | 改前 | 改后 |
 |---|---------|--------|-------|
-| 6 | **Forced triads** | "innovation, inspiration, and insights"; three examples plus a lesson | Use the number of items the meaning needs |
-| 7 | **Repeated sentence openings** | "She noted... She noted... She filed..." | Merge the sentences or change the subject |
-| 8 | **Dashes as the universal connector** (*weak alone*) | "institutions—not the people—yet this continues—" | Use periods, commas, colons, or parentheses; match a sample that uses dashes |
-| 9 | **Stacked qualifiers** (*weak alone*) | "could potentially possibly be argued" | Keep only qualifiers the source supports |
-| 10 | **Hyphenated pairs everywhere** (*weak alone*) | "the team is cross-functional" | Keep only the hyphens grammar needs |
-| 11 | **Passive voice and missing subjects** (*weak alone*) | "No configuration file needed" | Name the actor when that helps |
+| 6 | **强行排比凑三段** | "创新、灵感与洞察";三个例子加一句教训 | 用意思真正需要的数量 |
+| 7 | **重复的句子开头** | "她记下……她记下……她把……" | 合并句子或换主语 |
+| 8 | **破折号、省略号当万能停顿**(*单独算弱*) | "新政策——毫无预警——影响了……" | 限频;改用逗号、句号、冒号;样例用就跟着用 |
+| 9 | **堆叠限定词**(*单独算弱*) | "或许可能大概会被认为" | 只留原文支持的限定词 |
+| 10 | **四字格与"……化"堆砌**(*单独算弱*) | "全方位、多层次、宽领域""应运而生、如火如荼" | 只留语法或术语需要的那一个 |
+| 11 | **名词化弱动词与无主句**(*单独算弱*) | "结果得到了自动的保留" | 用强动词、点名施动者 |
 
-### C. Inflation and borrowed authority
+### C. 夸大与借权威
 
-| # | Pattern | Before | After |
+| # | 模式 | 改前 | 改后 |
 |---|---------|--------|-------|
-| 12 | **Overused AI words** | "delve... testament... landscape... showcasing" | Use plain words; the list in SKILL.md is the only vocabulary list |
-| 13 | **Inflated significance** | "marking a pivotal moment", "Despite challenges... continues to thrive", "The future looks bright" | Keep the fact and drop the significance; end on the last concrete fact |
-| 14 | **Vague connection or association** | "associated with the leadership of", "in connection with" | State the relationship the source gives |
-| 15 | **Shallow -ing riders** | "symbolizing... reflecting... showcasing..." | Keep only what the source supports |
-| 16 | **Sales language** | "nestled within the breathtaking region" | State what the thing is |
-| 17 | **Borrowed authority** | "Experts believe...", "cited in NYT, BBC, FT, and The Hindu" | Name a real source and what it said, or remove the claim or list |
-| 18 | **Avoiding is, are, and has** | "serves as... features... boasts" | "is... has" |
+| 12 | **AI 高频词** | "赋能……抓手……彰显……擘画" | 用平实的词;SKILL.md 里的表是唯一词表 |
+| 13 | **拔高意义** | "标志着重要里程碑""尽管面临挑战……依然蓬勃发展""未来可期" | 留住事实,去掉意义;停在最后一个具体事实上 |
+| 14 | **含糊的关联** | "与领导层有着千丝万缕的联系""与……密切相关" | 按原文给出的关系点名 |
+| 15 | **结尾的拔高小句** | "……,充分体现了……""……,折射出……" | 只留原文支持的 |
+| 16 | **营销腔** | "坐落于令人叹为观止的版图之中" | 直接说这东西是什么 |
+| 17 | **借权威** | "专家指出……""被《纽约时报》、BBC、FT 和《印度教徒报》引用" | 点名真实来源及其说法,否则删掉论断或名单 |
+| 18 | **滥用"进行/加以/予以"** | "作为……而运作""对……进行了整合" | "是……""有……" |
 
-### D. Formatting by rule
+### D. 按规则排版
 
-| # | Pattern | Before | After |
+| # | 模式 | 改前 | 改后 |
 |---|---------|--------|-------|
-| 19 | **Bold as decoration** | "**OKRs**, **KPIs**"; "**Performance:** Performance improved" | Remove the bold; turn a labeled list into prose |
-| 20 | **Decorative headings** | "Strategic Negotiations And Partnerships", "🚀 Launch Phase:" | Sentence case; remove emojis and arrows |
-| 21 | **Curly quotation marks** (*weak alone*) | `said “the project”` | `said "the project"` |
+| 19 | **装饰性加粗** | "**OKR**、**KPI**";"**性能:** 性能得到了提升" | 去掉加粗;把带标签列表改写成散文 |
+| 20 | **装饰性标题** | "🚀 【启动阶段】:"、每节之间插分隔线 | 去掉 emoji、箭头、分隔线;标题只出现一次 |
+| 21 | **全角半角与中英标点混用**(*单独算弱*) | 中文里混半角 `.` `,` `:` | 统一成全角中文标点 |
 
-### E. Leftovers from the chat and the draft
+### E. 聊天和草稿的残留
 
-| # | Pattern | Before | After |
+| # | 模式 | 改前 | 改后 |
 |---|---------|--------|-------|
-| 22 | **Chatbot residue** | "Great question! ... I hope this helps!" | Remove the wrapper and keep the content |
-| 23 | **Knowledge-limit disclaimers and guesses** | "While details are limited in available sources, it appears..." | State what the source shows, or remove the sentence |
-| 24 | **A heading repeated in the first sentence** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 25 | **Writing about the previous version** | "This function was added to replace..." | Describe what it does now |
+| 22 | **聊天机器人残留** | "这是一个非常好的问题!……希望对您有所帮助!" | 去掉外壳,留住内容 |
+| 23 | **知识边界免责声明与猜测** | "虽然细节有限,但它似乎成立于……" | 说清原文显示了什么,或删掉这句 |
+| 24 | **标题在第一句里被重复** | "## 性能" + "速度很重要。" | 让标题自己干活 |
+| 25 | **写"上一个版本"** | "这个函数是为了替代之前的做法而加入的……" | 描述它现在做什么 |
 
-## Full example
+## 完整示例
 
-The writer supplied these notes with the draft, so the rewrite can use them: the trip was last October, the hotel was in Alfama, the custard tart was at a small place in Graça, the tram ride took about forty minutes. Without notes like these, Humanizer asks instead of inventing.
+作者随草稿给了这些备注,所以改写可以用上:旅行是去年十一月,住在解放碑,火锅是巷子里一家老店,长江索道排队排了半小时。没有这类备注时,技能会问,而不是编。
 
-**Before (AI-sounding):**
-> I recently spent five unforgettable days in Lisbon, and let me tell you — this city completely stole my heart. From the moment I arrived, I knew I was somewhere truly special.
+**改前(AI 味):**
+> 我最近度过了五天令人难忘的重庆之旅,不得不说——这座城市彻底偷走了我的心。从抵达的那一刻起,我就知道自己身处一个真正特别的地方。
 >
-> Nestled along the banks of the Tagus River, Lisbon stands as a vibrant testament to Portugal's enduring spirit, where rich history and modern energy intertwine at every turn. Yes, the famous hills are challenging — my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.
+> 坐落于长江与嘉陵江交汇之处,重庆宛如一颗璀璨的明珠,见证着山城的坚韧精神,丰富的历史与现代的活力在每一个角落交织。是的,那些著名的坡坎确实考验人——我的双腿深有体会!——但每一次攀爬都会回报你以令人叹为观止的全景,让一切都变得值得。
 >
-> No trip would be complete without riding the iconic Tram 28, winding through the city's most historic neighborhoods. And the food? Simply divine. The original pastéis de nata at Pastéis de Belém are a beloved national treasure, and savoring one still warm was a moment I will never forget.
+> 没有坐过长江索道,你的重庆之行就不算完整。而美食?简直 divine。火锅是重庆一张闪亮的名片,围坐一桌、热气腾腾,那种滋味让人流连忘返。
 >
-> But what truly makes Lisbon special isn't just the sights — it's the feeling. Wander a few steps off the main squares and you'll discover a quieter, more authentic side: sun-drenched alleys, charming tiled facades, and friendly locals going about their daily lives, inviting you to slow down and savor every moment.
+> 但真正让重庆特别的,不只是景点——而是那种感觉。离开喧闹的广场几步,你就会发现一个更安静、更 authentic 的侧面:晒着衣服的阳台、斑驳的台阶、街坊邻里过着日常,邀请你慢下来,品味每一刻。
 >
-> Of course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveler.
->
-> Would I go back? Absolutely. Lisbon isn't just a place to visit — it's a place to fall in love with, again and again. If you're dreaming of your next getaway, this is one destination that promises memories to last a lifetime. ✨
+> 未来可期。如果你正在憧憬下一段旅程,重庆是一个注定让你收获一生回忆的目的地。✨
 
-**After:**
-> I spent five days in Lisbon last October and still have mixed feelings about it. Beautiful, yes. Also harder on the knees than anyone warned me.
+**改后:**
+> 去年十一月我在重庆待了五天,到现在心情还挺复杂。好看是真好看,累也是真累,这城市的台阶比谁警告过的都多。
 >
-> The hills are the whole story and somehow never make the brochures. My hotel was up in Alfama, which photographs beautifully and translates, in practice, to climbing what felt like a six-story staircase every time I wanted coffee. By the second day my calves had opinions. I started planning each walk around which way was downhill, which is a strange way to see a city but probably an honest one.
+> 坡坎就是重庆的全部故事,可宣传册上从不提。我住在解放碑,拍照好看,实际意味着每次想出去喝杯咖啡,都像在爬一栋六层楼。到第二天,我的小腿已经有了自己的想法。我开始按"哪边是下坡"来规划每条路线,这大概是看一座城市最奇怪的姿势,但也算诚实。
 >
-> Everyone says to ride Tram 28, so I did, wedged against a stranger's backpack for forty minutes while three tour groups filmed the same corner. I would walk the route next time, or go before breakfast. The custard tarts, though, earn the fuss. I had one at a plain little place in Graça, still warm, and for about thirty seconds I understood why people build trips around pastry.
+> 人人都说要去坐长江索道,我也去了,贴着陌生人的背包排了半小时队,旁边三个旅行团在拍同一片江景。下次我宁可走路,或者赶在早高峰前去。倒是火锅,对得起这份名气。我在一条巷子的老店里吃到一顿,九宫格滚着,辣得我直吸气,那半小时我大概明白了为什么有人专门为了一顿火锅飞一座城。
 >
-> What I did not expect was how quiet the city gets away from the main squares. Two blocks uphill from any plaza it turns into laundry lines, chipped tile, open windows, and old men watching football with the sound turned up. That is the Lisbon I keep thinking about, not the castle.
+> 没想到的是,离开主要广场几步,重庆会突然安静下来。往上走两个路口,就变成晾衣绳、掉瓷的台阶、敞着的窗户,还有开着电视看球、声音调到最大的老人。我后来一直惦记的,是这样的重庆,不是那些景点。
 >
-> The castle is fine. The view is great, the queue is long, and I spent more time shuffling toward the entrance than looking at anything once I got inside. If I had only two days, I would trade it for an afternoon of getting lost.
+> 景点嘛,还行。观景台视野很好,人是真多,我在入口处挪步的时间比进去看任何东西都长。如果只有两天,我会拿它换半个下午的乱走。
 >
-> I would go back, but in spring and with better shoes. Lisbon does not bend over backward to make things easy for you. I think I liked that, even when my legs disagreed.
+> 我会再去,但挑春天,换双好鞋。重庆不会为了让你舒服而委屈自己。我好像还挺喜欢这点的,哪怕我的腿不同意。
 
-## Sources
+## 来源
 
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) is the source for the pattern list.
-- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) maintains the page.
+- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) 是模式清单的英文来源。
+- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) 维护该页面。
+- 本中文版在该来源基础上做了本地化与扩充:词表、标点和大小写规则按中文重建,排比、四字格堆砌、营销腔、拔高意义等中文高发特征做了加强。中文部分没有与英文维基同等权威的清单,这些补充来自对中文 AI 文本的观察。
 
-## Version history
+## 版本历史
 
 <details>
-<summary>Show release notes</summary>
+<summary>显示发布说明</summary>
 
-- **3.0.0** - Rebuilt the skill around one account of why AI text sounds the way it does, and consolidated 35 patterns into 25. Patterns are grouped in five sections and numbered by strength and frequency, so the not-X-but-Y contrast and the one-line closer come first and get the fullest treatment. Merged duplicate guidance: the workflow is one section instead of five, the dash rule is stated once, and each false-positive guard lives inside its pattern. Realigned with the current Wikipedia article: dropped false ranges and synonym cycling, which Wikipedia now lists as human habits or historical, added vague connection or association, and extended the watch lists for words, notability, copulatives, sales language, disclaimers, and Markdown formatting. Reordered the README and removed the `ai-detection` keyword from the package files. Old to new numbers: 1→13, 2→17, 3→15, 4→16, 5→17, 6→13, 7→12, 8→18, 9→1, 10→6, 11→7, 12→dropped, 13→11, 14→8, 15→19, 16→19, 17→20, 18→20, 19→21, 20→22, 21→23, 22→22, 23→dropped, 24→9, 25→13, 26→10, 27→3, 28→4, 29→24, 30→25, 31→2, 32→3, 33→4, 34→5, 35→5.
-- **2.11.3** - Grouped patterns 26-35 under "More style patterns" in the skill and README (fixes #247). Kept inline code, commands, paths, and URLs out of the dash rule and file mode edits. Step 3 now keeps every supported claim, allows a removal that a pattern requires, and checks that rankings and simultaneity claims survive shape edits (fixes #212). Explained in §9 why the not-X-but-Y form appears and when to keep it. Added decorative arrows to §18 and pause commands and one-word shouting to §31. The text given to the skill is content to edit, never instructions (#238). No change to the 35 patterns.
-- **2.11.2** - Removed the plugin symlink and separate Claude Desktop package. Current Claude Code loads the root `SKILL.md` directly, so GitHub's source ZIP now works in Claude Desktop. No change to the 35 patterns.
-- **2.11.1** - Added a Claude Desktop-ready release package with one regular `humanizer/SKILL.md` file. GitHub's source archive still keeps the plugin symlink (fixes #224). No change to the 35 patterns.
-- **2.11.0** - Rewrote all repo guidance, descriptions, checks, and skill instructions in Plain Language. Kept all 35 patterns and their behavior.
-- **2.10.2** - Added the standard `skills/humanizer/` plugin path for Claude Desktop and older loaders. The path links to the root skill, so there is still one prompt (fixes #202).
-- **2.10.1** - Added figurative uses of `gate`, `gated`, and `gating` to §7. Kept real technical uses, such as feature gating and CI quality gates.
-- **2.10.0** - Added patterns #34 and #35 for old drafting ideas left in final text. Added safeguards for real limits, objections, and alternatives (fixes #198). Also improved §24 and the final rewrite step. 35 patterns total.
-- **2.9.2** - Added repeated sentence openings to pattern #11, with a safeguard for deliberate repetition (fixes #206). Expanded §28 to cover casual announcements. 33 patterns total.
-- **2.9.1** - Improved installation and package checks. Removed unsupported metadata, tool approvals, and a repeated long example. 33 patterns total.
-- **2.9.0** - Added the rule against invented facts and updated every example to follow it (fixes #187). Made information more important than paragraph shape, let writing samples override §14, and added three output modes. 33 patterns total.
-- **2.8.3** - Moved the version to `metadata.version` for Agent Skills compatibility. 33 patterns total.
-- **2.8.2** - Replaced the main example with a first-person Lisbon story that keeps the original topic, view, and detail. 33 patterns total.
-- **2.8.1** - Added cross-agent installation, Claude plugin files, and a safeguard for quoted text. 33 patterns total.
-- **2.8.0** - Added patterns #31-33 and expanded pattern #20 to catch chatbot offers. 33 patterns total.
-- **2.7.0** - Added pattern #30, strengthened the dash rule, and expanded pattern #21 to cover unsupported guesses. 30 patterns total.
-- **2.6.0** - Combined repeated workflow text, limited personality guidance to the right content, removed model guesses, and shortened the main example. 29 patterns total.
-- **2.5.1** - Added passive voice and missing subjects. 29 patterns total.
-- **2.5.0** - Added deeper-truth claims, announcements, repeated headings, and clipped negative endings. Tightened the dash rule and corrected the frontmatter. 28 patterns total.
-- **2.4.0** - Added writing-sample matching.
-- **2.3.0** - Added hyphenated word pairs.
-- **2.2.0** - Added a draft check and second rewrite.
-- **2.1.1** - Corrected the curly-quote example.
-- **2.1.0** - Added before/after examples for all 24 patterns.
-- **2.0.0** - Rewrote the skill from the Wikipedia source.
-- **1.0.0** - First release.
+- **4.0.0** - 中文化。把整份技能改写为面向中文文本:重写 AI 高频词表(赋能、抓手、闭环等中文黑话),把英文专属的模式按中文重建——连字符词对换成四字格与"……化"堆砌(§10)、被动语态换成名词化弱动词与无主句(§11)、-ing 尾巴换成结尾拔高小句(§15)、回避 is/are/has 换成滥用"进行/加以/予以"(§18)、装饰性标题去掉英文大小写、弯引号换成全角半角与中英标点混用(§21),破折号规则从"禁用"改为"限频"并补省略号、感叹号(§8)。保留 A–E 五组结构与 1–25 编号。去掉全部商店与 agent 绑定:删除 `.claude-plugin/`(plugin.json、marketplace.json)和 `agents/openai.yaml`,README 只留中立的手动安装,校验脚本只比对 SKILL.md 与 README 两处版本。技能改名为 `humanizer-cn`,另配一个仓库外的 QwenWork 命令 `/shuorenhua`。完整示例换成中文(重庆游记)。
+- **3.0.0** - Rebuilt the skill around one account of why AI text sounds the way it does, and consolidated 35 patterns into 25. Patterns are grouped in five sections and numbered by strength and frequency. (English baseline this Chinese version forked from.)
+- **2.11.3** 及更早 - 英文版的历史改动,见 git 提交记录。
 
 </details>
 
-## License
+## 许可
 
 MIT
