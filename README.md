@@ -54,7 +54,7 @@
 语言模型总是写“最可能接下去”的词，所以它默认选的是适配最广读者、最广主题的那个选项。人只为一个读者、一个主题做选择。本技能找的每个特征，都是这种默认选择的一种表现：一句暗示“这很重要”却没给出事实的句子、按规则套用的节奏或排版、被包装成转折点的普通事实，或从聊天里残留下来的外壳。
 
 > “LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases.”
-> Wikipedia, ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+> Wikipedia, [“Signs of AI writing”](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
 
 技能会标出它发现的每个特征，强的在前；起草改写时不把原结构当成不可动；再把草稿对照模式和原文论断检查一遍；最后写出终稿。它不编造。人名、数字、日期、引语、出处等事实细节必须来自原文或作者；如果某个句子缺一个细节，它会问，而不是编一个。
 
@@ -141,6 +141,8 @@
 > 景点嘛，还行。观景台视野很好，人是真多，我在入口处挪步的时间比进去看任何东西都长。如果只有两天，我会拿它换半个下午的乱走。
 >
 > 我会再去，但挑春天，换双好鞋。重庆不会为了让你舒服而委屈自己。我好像还挺喜欢这点的，哪怕我的腿不同意。
+
+注意：示例里的具体细节都来自上面那行备注，或属于作者语气；没有备注时宁可写短、写平淡，也不要编细节（见 SKILL.md 第 2 步）。
 
 ## 来源
 
